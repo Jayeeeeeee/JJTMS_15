@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\Role; // Ensure Role model is imported
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -25,6 +25,8 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        // Initialize data arrays
         $data = [];
 
         if ($user->role->name === 'Admin') {

@@ -27,9 +27,10 @@ Route::get('/', function () {
 require __DIR__ . '/auth.php';
 
 // Dashboard Route
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+//Route::get('/dashboard', function () {
+//    return view('dashboard');
+//})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware(['auth']);
 
 // User Management Routes (Admin Only)
 Route::resource('users', UserController::class)->middleware(['auth', 'role:Admin']);
