@@ -17,7 +17,8 @@
         @endif
 
         <!-- Admin Dashboard -->
-        @if (Auth::user()->role->name === 'Admin')
+        {{-- @if (Auth::user()->role->name === 'Admin') --}}
+        @if (Auth::user()->hasRole('Admin'))
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div class="bg-white shadow rounded-lg p-6">
                     <h2 class="text-xl font-semibold mb-2">Total Users</h2>
@@ -74,10 +75,11 @@
                     </ul>
                 </div>
             </div>
-        @endif
+            {{-- @endif --}}
 
-        <!-- Team Leader Dashboard -->
-        @if (Auth::user()->role->name === 'Team Leader')
+            <!-- Team Leader Dashboard -->
+            {{-- @if (Auth::user()->role->name === 'Team Leader') --}}
+        @elseif (Auth::user()->hasRole('Team Leader'))
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div class="bg-white shadow rounded-lg p-6">
                     <h2 class="text-xl font-semibold mb-2">My Projects</h2>
@@ -122,10 +124,11 @@
                     </ul>
                 </div>
             </div>
-        @endif
+            {{-- @endif --}}
 
-        <!-- Team Member Dashboard -->
-        @if (Auth::user()->role->name === 'Team Member')
+            <!-- Team Member Dashboard -->
+            {{-- @if (Auth::user()->role->name === 'Team Member') --}}
+        @elseif (Auth::user()->hasRole('Team Member'))
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div class="bg-white shadow rounded-lg p-6">
                     <h2 class="text-xl font-semibold mb-2">Assigned Tasks</h2>

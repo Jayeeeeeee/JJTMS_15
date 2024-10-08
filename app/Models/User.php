@@ -32,6 +32,31 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param  string  $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role && $this->role->name === $role;
+    }
+
+    /**
+     * Check if the user has any of the specified roles.
+     *
+     * @param  array|string  $roles
+     * @return bool
+     */
+    public function hasAnyRole($roles): bool
+    {
+        if (is_array($roles)) {
+            return $this->role && in_array($this->role->name, $roles);
+        }
+
+        return $this->hasRole($roles);
+    }
 
     // User has many Projects (if Admin or Team Leader)
     public function projects()

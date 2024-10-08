@@ -27,27 +27,41 @@ Route::get('/', function () {
 require __DIR__ . '/auth.php';
 
 // Dashboard Route
-//Route::get('/dashboard', function () {
-//    return view('dashboard');
-//})->middleware(['auth'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware(['auth']);
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard')
+    ->middleware(['auth']);
 
 // User Management Routes (Admin Only)
-Route::resource('users', UserController::class)->middleware(['auth', 'role:Admin']);
+//Route::resource('users', UserController::class)->middleware(['auth', 'role:Admin']);
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+    Route::resource('users', UserController::class);
+});
 
 // Project Routes
-Route::resource('projects', ProjectController::class)->middleware(['auth', 'role:Admin,Team Leader']);
+//Route::resource('projects', ProjectController::class)->middleware(['auth', 'role:Admin,Team Leader']);
+Route::middleware(['auth', 'role:Admin,Team Leader'])->group(function () {
+    Route::resource('projects', ProjectController::class);
+});
 
 // Task Routes
-Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create')->middleware(['auth', 'role:Admin,Team Leader']);
-Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store')->middleware(['auth', 'role:Admin,Team Leader']);
-Route::post('tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete')->middleware(['auth', 'role:Team Member']);
-Route::resource('tasks', TaskController::class);
+//Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create')->middleware(['auth', 'role:Admin,Team Leader']);
+//Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store')->middleware(['auth', 'role:Admin,Team Leader']);
+//Route::post('tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete')->middleware(['auth', 'role:Team Member']);
+//Route::resource('tasks', TaskController::class);
+
+// Task Routes
+Route::middleware(['auth', 'role:Admin,Team Leader'])->group(function () {
+    Route::resource('tasks', TaskController::class)->except(['complete']);
+
+    Route::post('tasks/{task}/complete', [TaskController::class, 'complete'])
+        ->name('tasks.complete')
+        ->middleware('role:Team Member');
+});
 
 // Task Routes (Admin and Team Leader)
-Route::middleware(['auth', 'role:Admin,Team Leader'])->group(function () {
-    Route::resource('tasks', TaskController::class);
-});
+//Route::middleware(['auth', 'role:Admin,Team Leader'])->group(function () {
+//    Route::resource('tasks', TaskController::class);
+//});
 
 //
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
@@ -80,4 +94,5 @@ Route::post('/email/resend', [EmailVerificationPromptController::class, 'resend'
 
 Auth::routes();
 
+// Redirect /home to dashboard or another appropriate controller
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

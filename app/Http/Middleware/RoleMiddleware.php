@@ -12,21 +12,19 @@ class RoleMiddleware
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string  $roles  Comma-separated roles
-     * @return mixed
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param  mixed  ...$roles
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next, $roles)
     {
-        if (!Auth::check()) {
+        $user = Auth::user();
+        if (!$user) {
             // User is not authenticated
             return redirect('/login');
         }
 
-        $user = Auth::user();
-        $rolesArray = array_map('trim', explode(',', $roles));
-
-        if (!in_array($user->role->name, $rolesArray)) {
+        if (!in_array($user->role->name, $roles)) {
             // User does not have any of the required roles
             abort(403, 'Unauthorized');
         }
